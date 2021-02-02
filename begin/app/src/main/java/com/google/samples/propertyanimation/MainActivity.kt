@@ -23,6 +23,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.animation.addListener
 
 class MainActivity : AppCompatActivity() {
 
@@ -72,26 +73,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun rotater() {
-        val animator = ObjectAnimator.ofFloat(star, View.ROTATION, -360f, 0f)
-        animator.duration = 1000
-        animator.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator?) {
-                rotateButton.isEnabled = false
-            }
-
-            override fun onAnimationEnd(animation: Animator?) {
-                rotateButton.isEnabled = true
-            }
-
-            override fun onAnimationCancel(animation: Animator?) {}
-
-            override fun onAnimationRepeat(animation: Animator?) {}
-
-        })
+        val animator = ObjectAnimator.ofFloat(star, View.ROTATION, -360f, 0f).apply {
+            duration = 1000
+            disableDuringAnimation(rotateButton)
+        }
         animator.start()
     }
 
     private fun translater() {
+        val animator = ObjectAnimator.ofFloat(star, View.TRANSLATION_X, 200f).apply {
+            repeatCount = 1
+            repeatMode = ObjectAnimator.REVERSE
+            disableDuringAnimation(translateButton)
+        }
+        animator.start()
     }
 
     private fun scaler() {
@@ -104,6 +99,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun shower() {
+    }
+
+    private fun ObjectAnimator.disableDuringAnimation(view: View) {
+        addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator?) {
+                view.isEnabled = false
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                view.isEnabled = true
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {}
+
+            override fun onAnimationRepeat(animation: Animator?) {}
+
+        })
     }
 
 }
