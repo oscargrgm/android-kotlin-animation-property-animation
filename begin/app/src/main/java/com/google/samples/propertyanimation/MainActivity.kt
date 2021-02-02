@@ -19,12 +19,12 @@ package com.google.samples.propertyanimation
 import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.animation.addListener
 
 class MainActivity : AppCompatActivity() {
 
@@ -112,6 +112,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun colorizer() {
+        val animator = ObjectAnimator.ofArgb(
+            star.parent,
+            PROPERTY_BACKGROUND_COLOR,
+            Color.BLACK,
+            Color.RED
+        ).apply {
+            duration = HALF_A_SECOND
+            repeatCount = ONCE
+            repeatMode = ObjectAnimator.REVERSE
+            disableDuringAnimation(colorizeButton)
+        }
+        animator.start()
     }
 
     private fun shower() {
@@ -134,7 +146,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private companion object {
+        private const val HALF_A_SECOND: Long = 500L
         private const val ONE_SECOND: Long = 1000L
         private const val ONCE: Int = 1
+
+        private const val PROPERTY_BACKGROUND_COLOR = "backgroundColor"
     }
 }
