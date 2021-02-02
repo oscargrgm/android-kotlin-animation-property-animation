@@ -17,14 +17,20 @@
 package com.google.samples.propertyanimation
 
 import android.animation.Animator
+import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 
 class MainActivity : AppCompatActivity() {
 
@@ -127,6 +133,49 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun shower() {
+        val container = star.parent as ViewGroup
+        val containerWidth = container.width
+        val containerHeight = container.height
+
+        var starWidth = star.width.toFloat()
+        var starHeight = star.height.toFloat()
+
+        val newStar = AppCompatImageView(this).apply {
+            setImageResource(R.drawable.ic_star)
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+            )
+            scaleX = Math.random().toFloat() * 1.5f + 0.1f
+            scaleY = scaleX
+        }
+
+        starWidth *= newStar.scaleX
+        starHeight *= newStar.scaleY
+
+        newStar.translationX = Math.random().toFloat() * (containerWidth - (starWidth / 2))
+
+        container.addView(newStar)
+
+        val mover = ObjectAnimator.ofFloat(
+            newStar,
+            View.TRANSLATION_Y,
+            -starHeight,
+            containerHeight + starHeight
+        ).apply { interpolator = AccelerateInterpolator(1f) }
+
+        val rotator = ObjectAnimator.ofFloat(
+            newStar,
+            View.ROTATION,
+            (Math.random() * 1080).toFloat()
+        ).apply { interpolator = LinearInterpolator() }
+
+        val animatorSet = AnimatorSet().apply {
+            playTogether(mover, rotator)
+            duration = (Math.random() * 1500 + 500).toLong()
+            removeWhenFinish(container, newStar)
+        }
+        animatorSet.start()
     }
 
     private fun ObjectAnimator.disableDuringAnimation(view: View) {
@@ -140,6 +189,22 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onAnimationCancel(animation: Animator?) {}
+
+            override fun onAnimationRepeat(animation: Animator?) {}
+        })
+    }
+
+    private fun AnimatorSet.removeWhenFinish(container: ViewGroup, view: View) {
+        addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator?) {}
+
+            override fun onAnimationEnd(animation: Animator?) {
+                container.removeView(view)
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+                container.removeView(view)
+            }
 
             override fun onAnimationRepeat(animation: Animator?) {}
         })
