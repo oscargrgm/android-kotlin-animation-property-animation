@@ -16,11 +16,13 @@
 
 package com.google.samples.propertyanimation
 
-import androidx.appcompat.app.AppCompatActivity
+import android.animation.Animator
+import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
-
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,12 +39,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         star = findViewById(R.id.star)
-        rotateButton = findViewById<Button>(R.id.rotateButton)
-        translateButton = findViewById<Button>(R.id.translateButton)
-        scaleButton = findViewById<Button>(R.id.scaleButton)
-        fadeButton = findViewById<Button>(R.id.fadeButton)
-        colorizeButton = findViewById<Button>(R.id.colorizeButton)
-        showerButton = findViewById<Button>(R.id.showerButton)
+        rotateButton = findViewById(R.id.rotateButton)
+        translateButton = findViewById(R.id.translateButton)
+        scaleButton = findViewById(R.id.scaleButton)
+        fadeButton = findViewById(R.id.fadeButton)
+        colorizeButton = findViewById(R.id.colorizeButton)
+        showerButton = findViewById(R.id.showerButton)
 
         rotateButton.setOnClickListener {
             rotater()
@@ -70,6 +72,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun rotater() {
+        val animator = ObjectAnimator.ofFloat(star, View.ROTATION, -360f, 0f)
+        animator.duration = 1000
+        animator.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator?) {
+                rotateButton.isEnabled = false
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                rotateButton.isEnabled = true
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {}
+
+            override fun onAnimationRepeat(animation: Animator?) {}
+
+        })
+        animator.start()
     }
 
     private fun translater() {
