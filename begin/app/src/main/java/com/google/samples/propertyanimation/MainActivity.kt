@@ -18,6 +18,7 @@ package com.google.samples.propertyanimation
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun rotater() {
         val animator = ObjectAnimator.ofFloat(star, View.ROTATION, -360f, 0f).apply {
-            duration = 1000
+            duration = ONE_SECOND
             disableDuringAnimation(rotateButton)
         }
         animator.start()
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun translater() {
         val animator = ObjectAnimator.ofFloat(star, View.TRANSLATION_X, 200f).apply {
-            repeatCount = 1
+            repeatCount = ONCE
             repeatMode = ObjectAnimator.REVERSE
             disableDuringAnimation(translateButton)
         }
@@ -90,6 +91,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun scaler() {
+        val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 4f)
+        val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 4f)
+
+        val animator = ObjectAnimator.ofPropertyValuesHolder(star, scaleX, scaleY).apply {
+            repeatCount = ONCE
+            repeatMode = ObjectAnimator.REVERSE
+            disableDuringAnimation(scaleButton)
+        }
+        animator.start()
     }
 
     private fun fader() {
@@ -114,8 +124,11 @@ class MainActivity : AppCompatActivity() {
             override fun onAnimationCancel(animation: Animator?) {}
 
             override fun onAnimationRepeat(animation: Animator?) {}
-
         })
     }
 
+    private companion object {
+        private const val ONE_SECOND: Long = 1000L
+        private const val ONCE: Int = 1
+    }
 }
